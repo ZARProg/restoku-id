@@ -72,19 +72,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isCollapse
 
       {/* Logout */}
       <div className="p-4 border-t border-gray-200">
-        {/* Desktop Toggle Button */}
-        <div className="hidden lg:block mb-3">
-          <button 
-            onClick={onToggleCollapse}
-            className="w-full flex items-center px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group"
-          >
-            <MenuIcon className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
-            {!isCollapsed && (
-              <span className="ml-3 font-medium">Toggle Menu</span>
-            )}
-          </button>
-        </div>
-        
         <button className="w-full flex items-center px-3 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group">
           <LogOut className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
           {!isCollapsed && (

@@ -53,6 +53,18 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageChange }) 
         </header>
 
         {/* Desktop Toggle */}
+        <div className="hidden lg:block bg-white shadow-sm border-b border-gray-200">
+          <div className="px-6 py-4">
+            <button 
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="flex items-center px-3 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group"
+            >
+              <Menu className="h-6 w-6 text-gray-400 group-hover:text-gray-600" />
+              <span className="ml-3 font-medium">Toggle Menu</span>
+            </button>
+          </div>
+        </div>
+
         {/* Page Content */}
         <main className="flex-1 overflow-auto">
           <div className="p-6">
