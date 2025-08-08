@@ -30,6 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageChange }) 
           currentPage={currentPage} 
           onPageChange={onPageChange}
           isCollapsed={false}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
       </div>
 
@@ -52,15 +53,6 @@ const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageChange }) 
         </header>
 
         {/* Desktop Toggle */}
-        <div className="hidden lg:flex items-center px-6 py-4 bg-white border-b border-gray-200">
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-3 rounded-lg text-gray-600 hover:bg-gray-100"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
-
         {/* Page Content */}
         <main className="flex-1 overflow-auto">
           <div className="p-6">
