@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isCollapse
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6">
+      <nav className="flex-1 px-3 py-4">
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
