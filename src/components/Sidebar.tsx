@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onPageChange, isCollapse
   return (
     <div className={`bg-white shadow-lg transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'} flex flex-col`}>
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center">
           <div className="bg-blue-600 p-2 rounded-lg">
             <ChefHat className="h-6 w-6 text-white" />
