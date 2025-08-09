@@ -42,6 +42,7 @@ const statusOptions = [
 
 const EditStatusModal: React.FC<EditStatusModalProps> = ({ isOpen, onClose, order, onSave }) => {
   const [selectedStatus, setSelectedStatus] = useState<Order['status']>(order?.status || 'menunggu');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   React.useEffect(() => {
     if (order) {
@@ -49,11 +50,28 @@ const EditStatusModal: React.FC<EditStatusModalProps> = ({ isOpen, onClose, orde
     }
   }, [order]);
 
-  const handleSave = () => {
-    if (order && selectedStatus !== order.status) {
-      onSave(order.id, selectedStatus);
+  const handleSave = async () => {
+    if (!order) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Simulasi API call untuk update status
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (selectedStatus !== order.status) {
+        onSave(order.id, selectedStatus);
+        
+        // Show success message
+        alert(`Status pesanan ${order.orderNumber} berhasil diubah ke "${selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1)}"`);
+      }
+      
+      onClose();
+    } catch (error) {
+      alert('Gagal mengupdate status pesanan. Silakan coba lagi.');
+    } finally {
+      setIsSubmitting(false);
     }
-    onClose();
   };
 
   const formatCurrency = (amount: number) => {
@@ -153,15 +171,24 @@ const EditStatusModal: React.FC<EditStatusModalProps> = ({ isOpen, onClose, orde
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+              disabled={isSubmitting}
+              className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Batal
             </button>
             <button
               onClick={handleSave}
-              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              disabled={isSubmitting || selectedStatus === order?.status}
+              className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              Simpan Perubahan
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Menyimpan...
+                </>
+              ) : (
+                'Simpan Perubahan'
+              )}
             </button>
           </div>
         </div>
