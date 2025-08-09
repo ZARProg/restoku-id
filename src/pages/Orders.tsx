@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Edit } from 'lucide-react';
-import { orders } from '../data/dummyData';
+import { orders, menuItems as defaultMenuItems } from '../data/dummyData';
 import AddOrderModal from '../components/AddOrderModal';
 import EditStatusModal from '../components/EditStatusModal';
-import { Order, OrderItem } from '../types';
+import { Order, OrderItem, MenuItem } from '../types';
 
-const Orders: React.FC = () => {
+interface OrdersProps {
+  menuItems?: MenuItem[];
+}
+
+const Orders: React.FC<OrdersProps> = ({ menuItems = defaultMenuItems }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('semua');
   const [ordersList, setOrdersList] = useState(orders);
@@ -224,6 +228,7 @@ const Orders: React.FC = () => {
       <AddOrderModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        availableMenuItems={menuItems}
         onSave={handleAddOrder}
       />
 

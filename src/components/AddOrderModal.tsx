@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { X, Plus, Minus } from 'lucide-react';
-import { menuItems } from '../data/dummyData';
 import { MenuItem, OrderItem } from '../types';
 
 interface AddOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
+  availableMenuItems: MenuItem[];
   onSave: (orderData: {
     tableNumber: number;
     items: OrderItem[];
@@ -13,12 +13,12 @@ interface AddOrderModalProps {
   }) => void;
 }
 
-const AddOrderModal: React.FC<AddOrderModalProps> = ({ isOpen, onClose, onSave }) => {
+const AddOrderModal: React.FC<AddOrderModalProps> = ({ isOpen, onClose, availableMenuItems, onSave }) => {
   const [tableNumber, setTableNumber] = useState<number>(1);
   const [selectedItems, setSelectedItems] = useState<OrderItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredMenuItems = menuItems.filter(item => 
+  const filteredMenuItems = availableMenuItems.filter(item => 
     item.available && item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

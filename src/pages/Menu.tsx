@@ -1,16 +1,76 @@
 import React, { useState } from 'react';
 import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { menuItems } from '../data/dummyData';
+import AddMenuModal from '../components/AddMenuModal';
+import EditMenuModal from '../components/EditMenuModal';
+import ViewMenuModal from '../components/ViewMenuModal';
+import DeleteMenuModal from '../components/DeleteMenuModal';
+import { MenuItem } from '../types';
 
-const Menu: React.FC = () => {
+interface MenuProps {
+  onMenuUpdate?: (updatedMenuItems: MenuItem[]) => void;
+}
+
+const Menu: React.FC<MenuProps> = ({ onMenuUpdate }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('semua');
+  const [menuList, setMenuList] = useState(menuItems);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState<MenuItem | null>(null);
 
-  const filteredItems = menuItems.filter(item => {
+  const filteredItems = menuList.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'semua' || item.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
+
+  const handleAddMenu = (menuData: Omit<MenuItem, 'id'>) => {
+    const newMenu: MenuItem = {
+      ...menuData,
+      id: (menuList.length + 1).toString(),
+      image: menuData.image || (menuData.category === 'makanan' 
+        ? 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'
+        : 'https://images.pexels.com/photos/1251175/pexels-photo-1251175.jpeg')
+    };
+    
+    const updatedMenuList = [newMenu, ...menuList];
+    setMenuList(updatedMenuList);
+    onMenuUpdate?.(updatedMenuList);
+  };
+
+  const handleEditMenu = (menuId: string, updatedData: Omit<MenuItem, 'id'>) => {
+    const updatedMenuList = menuList.map(menu => 
+        menu.id === menuId 
+          ? { ...updatedData, id: menuId }
+          : menu
+      );
+    setMenuList(updatedMenuList);
+    onMenuUpdate?.(updatedMenuList);
+  };
+
+  const handleDeleteMenu = (menuId: string) => {
+    const updatedMenuList = menuList.filter(menu => menu.id !== menuId);
+    setMenuList(updatedMenuList);
+    onMenuUpdate?.(updatedMenuList);
+  };
+
+  const openViewModal = (menu: MenuItem) => {
+    setSelectedMenu(menu);
+    setIsViewModalOpen(true);
+  };
+
+  const openEditModal = (menu: MenuItem) => {
+    setSelectedMenu(menu);
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteModal = (menu: MenuItem) => {
+    setSelectedMenu(menu);
+    setIsDeleteModalOpen(true);
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -20,9 +80,9 @@ const Menu: React.FC = () => {
   };
 
   const categoryCounts = {
-    semua: menuItems.length,
-    makanan: menuItems.filter(item => item.category === 'makanan').length,
-    minuman: menuItems.filter(item => item.category === 'minuman').length,
+    semua: menuList.length,
+    makanan: menuList.filter(item => item.category === 'makanan').length,
+    minuman: menuList.filter(item => item.category === 'minuman').length,
   };
 
   return (
@@ -35,7 +95,7 @@ const Menu: React.FC = () => {
         </div>
         <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
           <Plus className="h-5 w-5 mr-2" />
-          Tambah Menu
+          onClick={() => setIsAddModalOpen(true)}
         </button>
       </div>
 
@@ -111,14 +171,26 @@ const Menu: React.FC = () => {
               {/* Actions */}
               <div className="flex items-center gap-2">
                 <button className="flex-1 flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                <button 
+                  onClick={() => openViewModal(item)}
+                  className="flex-1 flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                >
                   <Eye className="h-4 w-4 mr-1" />
                   Lihat
                 </button>
                 <button className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-200">
+                <button 
+                  onClick={() => openEditModal(item)}
+                  className="flex-1 flex items-center justify-center px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                >
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
                 </button>
                 <button className="flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors duration-200">
+                <button 
+                  onClick={() => openDeleteModal(item)}
+                  className="flex items-center justify-center px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors duration-200"
+                >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
@@ -132,6 +204,33 @@ const Menu: React.FC = () => {
           <p className="text-gray-500">Tidak ada menu yang ditemukan</p>
         </div>
       )}
+
+      {/* Modals */}
+      <AddMenuModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddMenu}
+      />
+
+      <EditMenuModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        menu={selectedMenu}
+        onSave={handleEditMenu}
+      />
+
+      <ViewMenuModal
+        isOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
+        menu={selectedMenu}
+      />
+
+      <DeleteMenuModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        menu={selectedMenu}
+        onDelete={handleDeleteMenu}
+      />
     </div>
   );
 };

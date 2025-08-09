@@ -5,18 +5,26 @@ import Orders from './pages/Orders';
 import Menu from './pages/Menu';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import { menuItems } from './data/dummyData';
+import { MenuItem } from './types';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [globalMenuItems, setGlobalMenuItems] = useState<MenuItem[]>(menuItems);
+
+  // Function to update menu items globally
+  const updateGlobalMenuItems = (updatedMenuItems: MenuItem[]) => {
+    setGlobalMenuItems(updatedMenuItems);
+  };
 
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />;
       case 'orders':
-        return <Orders />;
+        return <Orders menuItems={globalMenuItems} />;
       case 'menu':
-        return <Menu />;
+        return <Menu onMenuUpdate={updateGlobalMenuItems} />;
       case 'reports':
         return <Reports />;
       case 'settings':
